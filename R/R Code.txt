@@ -1,0 +1,237 @@
+1. Suppose that trees are distributed in a forest according to a two-dimensional Poisson process with lambda the expected number of trees per acre given by 80.
+(a)What is the probability that in a certain quarter acre plot there will be at most 16 trees?
+(b)If the forest covers 85,000 acres what is the expected number of trees in the forest?
+
+Answers:
+> lambda <- 80
+> plot_size <- 0.25
+> forest_size <- 85000
+> #Probability of at most 16 trees in a quarter acre plot
+> probability_at_most_16_trees <- ppois(16, lambda * plot_size)
+> probability_at_most_16_trees
+[1] 0.2210742
+> #Expected number of trees in the forest
+> expected_number_of_trees <- lambda * forest_size
+> expected_number_of_trees
+[1] 6800000
+
+2. Suppose the diameter at breast height (in.) of a certain type of tree is distributed normally with a mean of 8.8 and a standard deviation of 2.8 as suggested in Aedo-Ortiz, D. M., Olsen, E. D., & Kellogg, L. D. (1997). Simulating a harvester-forwarder softwood thinning: a software evaluation. Forest Products Journal, 47(5), 36.
+(a)What is the probability that the diameter of a randomly selected tree will be at least 10 inches? Will exceed 10 inches.
+(b)What is the value of c so that the interval (8.8-c, 8.8+c) contains 98% of all diameter values
+
+Answers:
+> mean <- 8.8
+> SD <- 2.8
+> #Probability that diameter is at least 10 inches
+> 1 - pnorm(10, mean, SD)
+[1] 0.3341176
+> #Probability that diameter will exceed 10 inches
+> pnorm(10, mean, SD, lower.tail = FALSE)
+[1] 0.3341176
+> #value of c containing 98% (0.98) diameter values
+> qnorm(0.99, mean, SD)
+[1] 15.31377
+
+3. Suppose that a group of 100 men aged 60-64 received a new flu vaccine in 1986 and that 5 of them died within the next year. Assume that a 1986 mortality table tells us that men aged 60-64 have an approximate probability of death in the next year of .020.
+(a)How unusal is it for the 5 men to have died
+(b)Suppose 10 men had died. Should we be concerned?
+
+Answers:
+> n <- 100
+> p <- 0.020
+> #a.)Probability of the 5 men to have died
+> dbinom(5, n, p)
+[1] 0.0353468
+> #b.)Probability of 10 men to die
+> dbinom(10, n, p)
+[1] 2.877078e-05
+
+4. The incidence of a certain type of chromosome defect in the U.S. adult male population is beleived to be1 in 75. A random sample of 800 individuals in U.S. pemal institutions reveals 16 who have such defects.Can it be concluded that the incidence rate of this defect among prisoners differs from the preseumed rate of the entire adult population.
+(a)State and test the relevant hypothesis using α=.05. What type of error might you have made in reaching a conclusion?
+(b)What P-value is associated with this test. Based on this P-value could H_0 be rejected at a significance level of .2
+
+Answers:
+a.)	Null hypothesis – The incidence rate among prisoners is the same as the presumed rate in the general population
+Alternate hypothesis - The incidence rate among prisoners is not the same as the presumed rate in the general population
+
+> male_population <- 1/75
+> sample_size <- 800
+> defects <- 16
+> #Number of defects in the sample
+> sample_size * male_population
+[1] 10.66667
+> #a.)Performing chi-square test
+> chisq.test(c(defects, sample_size - defects), p = c(male_population, 1 - male_population))
+
+	Chi-squared test for
+	given probabilities
+
+data:  c(defects, sample_size - defects)
+X-squared = 2.7027, df =
+1, p-value = 0.1002
+
+Rejection of null hypothesis at a significant level of 0.05:
+Base on the chi-squared test, there was no evidence to reject the null hypothesis at a significant level of 0.05.
+
+> chi_squared_test <- chisq.test(c(defects, sample_size - defects), p = c(male_population, 1 - male_population))
+> #b.)P-value associated with the test
+> chi_squared_test$p.value
+[1] 0.1001783
+
+Rejection of null hypothesis at a significant level of 0.2:
+Since the p-value obtained is less than the 0.2, the null hypothesis was rejected at a significant level of 0.2.
+
+5. The following article (Thomas, H. V., & Simmons, E. L. L. A. M. A. E. (1969). Histamine content in sputum from allergic and nonallergic individuals. Journal of applied physiology, 26(6), 793-797) reports the following data on sputum histamine levels (μg/g dry weight of sputum) for a sample of 9 individuals classified as allergics and 13 individuals classified as nonallergics.
+Allergics = {67.7, 39.6,1651.0, 100.0, 65.9,1112.0,31.0, 102.4,64.7}
+Nonallergics = {34.3, 27.3, 35.4, 48.1, 5.2, 29.1, 4.7, 41.7, 48.0, 6.6, 18.9, 32.4, 45.5}
+(a)Ascertain the normality of this data using the Shapiro Wilks test.
+(b)You should have seen that one of these failed the test. Perform the apprpriate nonparametric test to compare the means. Does the P-value suggest that we can reject at the .01 level?
+
+Answers:
+> allergics <- c(67.7, 39.6, 1651.0, 100.0, 65.9, 1112.0, 31.0, 102.4, 64.7)
+> nonallergics <- c(34.3, 27.3, 35.4, 48.1, 5.2, 29.1, 4.7, 41.7, 48.0, 6.6, 18.9, 32.4, 45.5)
+> #a.)Shapiro-Wilk test for normality
+> shapiro.test(allergics)
+
+	Shapiro-Wilk normality
+	test
+
+data:  allergics
+W = 0.60703, p-value =
+0.0001157
+
+> shapiro.test(nonallergics)
+
+	Shapiro-Wilk normality
+	test
+
+data:  nonallergics
+W = 0.89783, p-value =
+0.1249
+
+> #b.)Performing a non-parametric test to compare the means
+> kruskal.test(list(allergics, nonallergics))
+
+	Kruskal-Wallis rank sum
+	test
+
+data:  list(allergics, nonallergics)
+Kruskal-Wallis chi-squared
+= 10.061, df = 1, p-value
+= 0.001514
+Since the p-value from Kruskal-wallis test is 0.001514 which is less than 0.01, this test suggests rejection at the 0.01 level.
+
+6. Two different fish attractors were compared during 16 time periods spanning 4 years. (Wilbur, R. L. (1978). Two types of fish attractors compared in Lake Tohopekaliga, Florida. Transactions of the American Fisheries Society, 107(5), 689-695.) I present the data as a set of ordered pairs where in each case the first entry is the “pipe attractor” and the second entry is the “brush attractor”
+{(6.64,9.73), (7.89,8.21),(1.83,2.17),(.42,.75),(.85,1.61),(.29,.75),(.57,.83),(.63,.56),(.32,.76),(.37,.32),(.00,.48),(.11.,.52),(4.86,5.38),(1.80,2.33),(.23,.91,),(.58,.79)}
+(a)Perform the apprpriate paired parameteric t-based tests to compare the means.
+(b)What happens if the two independent samples t-test is used? Make sure to perform all appropriate tests.
+
+Answers:
+> pipe_attractor <- c(6.64, 7.89, 1.83, 0.42, 0.85, 0.29, 0.57, 0.63, 0.32, 0.37, 0.00, 0.11, 4.86, 1.80, 0.23, 0.58)
+> brush_attractor <- c(9.73, 8.21, 2.17, 0.75, 1.61, 0.75, 0.83, 0.56, 0.76, 0.32, 0.48, 0.52, 5.38, 2.33, 0.91, 0.79)
+> #a.)Performing paired t-test to compare the means
+> t.test(pipe_attractor, brush_attractor, paired = TRUE)
+
+	Paired t-test
+
+data:  pipe_attractor and brush_attractor
+t = -3.0496, df = 15,
+p-value = 0.00811
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -0.924855 -0.163895
+sample estimates:
+mean of the differences 
+              -0.544375 
+
+> #b.)Performing independent sample t-test
+> t.test(pipe_attractor, brush_attractor)
+
+	Welch Two Sample t-test
+
+data:  pipe_attractor and brush_attractor
+t = -0.56979, df = 29.251,
+p-value = 0.5732
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -2.497656  1.408906
+sample estimates:
+mean of x mean of y 
+ 1.711875  2.256250 
+The paired t-test compares the means of the two attractors within each time period, while the independent samples t-test treats the data as two independent groups.
+
+7.In a well-known genetics article (Yule, G. U. (1923). The progeny, in generations F 12 to F 17 of a cross between a yellow-wrinkled and a green-round seeded pea; a report on data afforded by experiments initiated by the late AD Darbishire, MA, in 1905, and conducted by him until his death in 1915. Journal of Genetics, 13(3), 255-331) the early statistician G. U. Yule dnalyzed data from crossing garden peas. The dominant alleles were Y = yellow color and R = round shape resulting in a double dominant YR.Yule examined 269 4 seed podsresulting from a dihybrid cross and counted the number of YR seeds in each pod.Letting X represent the number of seeds in a randomly selected pods possible X values are 0, 1, 2, 3, and 4 which are identified with cells 1, 2, 3, 4, 5 of a 1 x 5 table. So a pod with X = 4 would have its count values in the 5th entry of the table.The hypothesis that the Mendelian laws are operative and that genetypes of individual seeds within a pod are independent of one another implies that X has a binomial distribution with n=4 and p=9/16. The null hypothesis is that the Medelian lawa hold true and the alternative hypothesis is that they do not. The entry in the table (the observed seed counts) reading from the first to the fifth are {16,45,100,82,26}.The probabilities under Ho are given by the values of the binomial distribution with n=4 and p=9/16 as the number of seeds i obtains values in the set {0,1,2,3,4}. Notice that the observed seed count for the 0th case is 16, the 1 case 45, etc. Use the R function chisq.test to test H0. [Hint - You will have to setup a vector of the observed values and a vector of the expected probabilities. Use the values as detailed above.] Do we reject the null hypothesis at the α level of .1?
+
+Answer:
+Null Hypothesis (H0) – The Mendelian laws are operative and that genetypes of individual seeds within a pod are independent of one another
+Alternate Hypothesis (H1) - The Mendelian laws are not operative and that genetypes of individual seeds within a pod are not independent of one another
+
+> observed_values <- c(16, 45, 100, 82, 26)
+> expected_probabilities <- dbinom(0:4, 4, 9/16)
+> chisq.test(observed_values, p = expected_probabilities)
+
+	Chi-squared test for
+	given probabilities
+
+data:  observed_values
+X-squared = 4.5908, df =
+4, p-value = 0.3319
+
+Since the p-value from the chi-square test is 0.3319, which is more than 0.1, we do not reject the null hypothesis at significant level of 0.1
+
+8. An article Annest, J. L., Pirkle, J. L., Makuc, D., Neese, J. W., Bayse, D. D., & Kovar, M. G. (1983). Chronological trend in blood lead levels between 1976 and 1980.New England Journal of Medicine, 308(23), 1373-1377 gives the following data on y = average blood lead level of white children age 6 months to 5 years and x = amount of lead used in gasoline production (in 1000 tons) for ten 6-month periods.x = {48,59,79,80,95,95,97,102,102,107} y={9.3,11.0,12.8,14.1,13.6,13.8,14.6,14.6,16.0,18.2}.
+(a)Construct normal probability plots for x and y. Might it be reasonable to assume that they come from a bivariate normal distribution?
+(b)Examine a scatterplot of y versus x. Does it look like there may be some correlation structure?
+(c)Does the data provide statistically significant information that there is a linear relationship between blood lead level and the amount of lead used in gasoline production? [Hint: Use an α level of .05 and the R function cor.test]
+
+Answers:
+> x <- c(48, 59, 79, 80, 95, 95, 97, 102, 102, 107)
+> y <- c(9.3, 11.0, 12.8, 14.1, 13.6, 13.8, 14.6, 14.6, 16.0, 18.2)
+> # Normal probability plot for x
+> qqnorm(x)
+> qqline(x)
+> # Normal probability plot for y
+> qqnorm(y)
+> qqline(y)
+> #b.)To create a scatterplot of y versus x
+> plot(x, y, main = "Scatterplot of y versus x", xlab = "Amount of lead in gasoline (1000 tons)", ylab = "Average blood lead level")
+> #c.)Performing the correlation test
+> cor.test(x, y)
+
+9. Consider the famous Fisher Iris data.
+(a)Make a pairs plot of this data coloring the observations based on the species designation using a red, green, blue color scheme and a plot symbol of pch = 21.[Hint: You will need to adjust the figure margin using oma=c(3,3,15) when you call pairs and also call par(xpd=TRUE) prior to calling legend. Position your legend in the bottomright of the plot]
+(b)Repeat the exercise of part (a) except produce a parallel coordinates plot.
+
+Answers:
+> data(iris)
+> oma = c(3, 3, 15)
+> pairs(iris[, 1:4], col = as.numeric(iris$Species), pch = 21, bg = c("red", "green", "blue")[as.numeric(iris$Species)])
+> par(xpd = TRUE)
+> legend("bottomright", legend = levels(iris$Species), fill = c("red", "green", "blue"), cex=0.6)
+
+10. Let’s return to the Fisher Iris data.
+(a)Use the summary function to explore this data.
+(b)Create a 2 x 2 matrix of box plots of the Fisher iris data with the sepal width and sepal length in the first row and the petal width and petal length in the second row.
+
+Answers:
+> data(iris)
+> summary(iris)
+> # (b) Box plots
+> par(mfrow = c(2, 2))  # Set up a 2x2 layout for plots
+> # Sepal width and sepal length
+> boxplot(Sepal.Width ~ Species, data = iris, main = "Sepal Width vs Species", ylab = "Sepal Width", col = c("red", "green", "blue"))
+> boxplot(Sepal.Length ~ Species, data = iris, main = "Sepal Length vs Species", ylab = "Sepal Length", col = c("red", "green", "blue"))
+> # Petal width and petal length
+> boxplot(Petal.Width ~ Species, data = iris, main = "Petal Width vs Species", ylab = "Petal Width", col = c("red", "green", "blue"))
+> boxplot(Petal.Length ~ Species, data = iris, main = "Petal Length vs Species", ylab = "Petal Length", col = c("red", "green", "blue"))
+> # Reset plot parameters
+> par(mfrow = c(1, 1))
+
+
+
+
+
+
+
+
+
